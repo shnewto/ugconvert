@@ -11,4 +11,6 @@ lazy val root = (project in file("."))
     libraryDependencies += scalaTest % Test
   )
 
+libraryDependencies += "org.apache.pdfbox" % "pdfbox" % "2.0.21"
+
 // See https://www.scala-sbt.org/1.x/docs/Using-Sonatype.html for instructions on how to publish to Sonatype.
