@@ -36,6 +36,7 @@ class IssueParser extends RegexParsers {
 object UgParse extends IssueParser {
 
   case class UgParseError(info: String)
+
   def get_table_of_contents_raw(
       issue_text: String
   ): Either[UgParseError, String] = {
