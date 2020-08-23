@@ -17,18 +17,17 @@ import scala.io.Source
 import scala.util.parsing.combinator._
 
 class IssueParser extends RegexParsers {
-  val until_toc = """.+?(?=Contents)+Contents""".r
-  val until_next_page = """.+?(?=Used Gravitrons Quarterly)+""".r
+  val until_toc = """.*?(?=Contents)""".r
 
   def table_of_contents: Parser[String] =
-    until_toc ~> until_next_page ^^ {
+    until_toc ~> """Contents.+""".r ^^ {
       _.toString
     }
 
   val until_bios =
-    """.+?(?=Contributors)+Contributors\..+?(?=Contributors)+Contributors""".r
+    """.*?(?=Contributors)""".r
   def contributor_bios: Parser[String] =
-    until_bios ~> """.+""".r ^^ {
+    until_bios ~> """Contributors.+""".r ^^ {
       _.toString
     }
 }
@@ -55,6 +54,22 @@ object UgParse extends IssueParser {
       case Failure(msg, _)     => return Left(UgParseError(msg))
       case Error(msg, _)       => return Left(UgParseError(msg))
     }
+  }
+
+  def trim_interesting_pages(issue_text: String): String = {
+    get_table_of_contents_raw(issue_text) match {
+      case Right(text) =>
+        return text
+      case _ =>
+    }
+
+    get_contributor_bios_raw(issue_text) match {
+      case Right(text) =>
+        return text
+      case _ =>
+    }
+
+    return issue_text
   }
 
   def debug(): Unit = {
