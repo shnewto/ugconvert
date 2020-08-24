@@ -6,6 +6,7 @@ import usedgravitrons.UgParse.UgParseError
 import java.io.BufferedReader
 import java.io.FileReader
 import scala.io.Source
+import usedgravitrons.UgIssue
 
 class UgParseSpec extends AnyFlatSpec with Matchers {
   "The UgParse object's getTableOfContentsRaw" should "should produce just the table of contents text when given an entire issue" in {
@@ -26,13 +27,13 @@ class UgParseSpec extends AnyFlatSpec with Matchers {
     // val issueText = Source.fromFile(issuePath).getLines.mkString
     val tocText = Source.fromFile(tocPath).getLines.mkString
 
-    UgParse.getTableOfContentsRaw(issuePages(0)) shouldEqual Right(tocText)
+    UgParse.getTableOfContentsRaw(issuePages(0).text) shouldEqual Right(tocText)
   }
 
   "The UgParse object's getContributorBiosRaw" should "should produce just the table of contents text when given an entire issue" in {
     val issuePath =
       getClass.getClassLoader.getResource("issue-01/issue-01.txt").getPath
-    val tocPath =
+    val biosPath =
       getClass.getClassLoader
         .getResource("issue-01/contributor-bios.txt")
         .getPath
@@ -44,8 +45,52 @@ class UgParseSpec extends AnyFlatSpec with Matchers {
       .split("Used Gravitrons Quarterly Page [0-9]+")
       .map(UgParse.parsePage(_))
 
-    val biosText = Source.fromFile(tocPath).getLines.mkString
+    val biosText = Source.fromFile(biosPath).getLines.mkString
 
-    UgParse.getContributorBiosRaw(issuePages.last) shouldEqual Right(biosText)
+    UgParse.getContributorBiosRaw(issuePages.last.text) shouldEqual Right(
+      biosText
+    )
+  }
+
+  "The UgParse object's parsePage" should "should produce a Toc object when given a Toc page candidate" in {
+    val issuePath =
+      getClass.getClassLoader.getResource("issue-01/issue-01.txt").getPath
+    val tocPath =
+      getClass.getClassLoader
+        .getResource("issue-01/table-of-contents.txt")
+        .getPath
+
+    val issuePages = Source
+      .fromFile(issuePath)
+      .getLines
+      .mkString
+      .split("Used Gravitrons Quarterly Page [0-9]+")
+
+    val tocText = Source.fromFile(tocPath).getLines.mkString
+
+    UgParse.parsePage(issuePages(0)) shouldEqual UgIssue.Toc(
+      tocText
+    )
+  }
+
+  "The UgParse object's parsePage" should "should produce a Bios object when given a Bios page candidate" in {
+    val issuePath =
+      getClass.getClassLoader.getResource("issue-01/issue-01.txt").getPath
+    val biosPath =
+      getClass.getClassLoader
+        .getResource("issue-01/contributor-bios.txt")
+        .getPath
+
+    val issuePages = Source
+      .fromFile(issuePath)
+      .getLines
+      .mkString
+      .split("Used Gravitrons Quarterly Page [0-9]+")
+
+    val biosText = Source.fromFile(biosPath).getLines.mkString
+
+    UgParse.parsePage(issuePages.last) shouldEqual UgIssue.Bios(
+      biosText
+    )
   }
 }

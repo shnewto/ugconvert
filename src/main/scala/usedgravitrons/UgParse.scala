@@ -12,6 +12,7 @@ import java.nio.CharBuffer
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission
 import org.apache.pdfbox.text.PDFTextStripper;
+import usedgravitrons.UgIssue
 
 import scala.io.Source
 import scala.util.parsing.combinator._
@@ -33,9 +34,7 @@ class IssueParser extends RegexParsers {
 }
 
 object UgParse extends IssueParser {
-
   case class UgParseError(info: String)
-
   def getTableOfContentsRaw(
       issueText: String
   ): Either[UgParseError, String] = {
@@ -56,21 +55,21 @@ object UgParse extends IssueParser {
     }
   }
 
-  def parsePage(issueText: String): String = {
+  def parsePage(issueText: String): UgIssue.UgPage = {
 
     getTableOfContentsRaw(issueText) match {
       case Right(text) =>
-        return text
+        return UgIssue.Toc(text)
       case _ =>
     }
 
     getContributorBiosRaw(issueText) match {
       case Right(text) =>
-        return text
+        return UgIssue.Bios(text)
       case _ =>
     }
 
-    return issueText
+    return UgIssue.Other(issueText)
   }
 
   def debug(): Unit = {

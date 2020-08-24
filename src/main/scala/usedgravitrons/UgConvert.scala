@@ -16,8 +16,12 @@ import org.apache.pdfbox.text.PDFTextStripper;
 import scala.io.Source
 import usedgravitrons.UgParse
 import usedgravitrons.UgExtract
+import usedgravitrons.UgIssue
 import com.spotify.scio._
+import com.spotify.scio.values.SCollection
+import com.spotify.scio.values.SideOutput
 import org.apache.beam.sdk.transforms.Create;
+import org.apache.beam.sdk.util.MimeTypes
 
 object UgConvert extends Edict {
 
@@ -33,19 +37,32 @@ object UgConvert extends Edict {
           ""
       }
 
-    debug()
-    // sc.wrap(sc.pipeline.apply(Create.of(Array(extractedIssueText))))
-    sc.wrap(sc.pipeline.apply(Create.of(extractedIssueText)))
+    val toc = SideOutput[String]()
+    val bios = SideOutput[String]()
+    val other = SideOutput[String]()
+
+    val ugpages = sc
+      .wrap(sc.pipeline.apply(Create.of(extractedIssueText)))
       .transform("intoPages") {
         _.flatMap(spiltPages(_))
       }
-      .transform("trimInterestingPages") {
-        _.map(p => UgParse.parsePage(p))
+
+    val (rest, sideOutputs) = ugpages
+      .withSideOutputs(toc, bios, other)
+      .flatMap { (p, ctx) =>
+        UgParse.parsePage(p) match {
+          case UgIssue.Toc(t)   => ctx.output(toc, t)
+          case UgIssue.Bios(t)  => ctx.output(bios, t)
+          case UgIssue.Other(t) => ctx.output(other, t)
+        }
+        ""
       }
-      .saveAsTextFile(args("output"))
+
+    sideOutputs(toc).saveAsTextFile(args("toc"))
+    sideOutputs(bios).saveAsTextFile(args("bios"))
+    sideOutputs(other).saveAsTextFile(args("other"))
 
     sc.run()
-    ()
   }
 
   case class UgConvertError(info: String)
