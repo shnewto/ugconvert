@@ -19,14 +19,14 @@ import scala.util.parsing.combinator._
 class IssueParser extends RegexParsers {
   val until_toc = """.*?(?=Contents)""".r
 
-  def table_of_contents: Parser[String] =
+  def tableOfContents: Parser[String] =
     until_toc ~> """Contents.+""".r ^^ {
       _.toString
     }
 
   val until_bios =
     """.*?(?=Contributors)""".r
-  def contributor_bios: Parser[String] =
+  def contributorBios: Parser[String] =
     until_bios ~> """Contributors.+""".r ^^ {
       _.toString
     }
@@ -36,40 +36,41 @@ object UgParse extends IssueParser {
 
   case class UgParseError(info: String)
 
-  def get_table_of_contents_raw(
-      issue_text: String
+  def getTableOfContentsRaw(
+      issueText: String
   ): Either[UgParseError, String] = {
-    parse(table_of_contents, issue_text) match {
+    parse(tableOfContents, issueText) match {
       case Success(matched, _) => return Right(matched)
       case Failure(msg, _)     => return Left(UgParseError(msg))
       case Error(msg, _)       => return Left(UgParseError(msg))
     }
   }
 
-  def get_contributor_bios_raw(
-      issue_text: String
+  def getContributorBiosRaw(
+      issueText: String
   ): Either[UgParseError, String] = {
-    parse(contributor_bios, issue_text) match {
+    parse(contributorBios, issueText) match {
       case Success(matched, _) => return Right(matched)
       case Failure(msg, _)     => return Left(UgParseError(msg))
       case Error(msg, _)       => return Left(UgParseError(msg))
     }
   }
 
-  def trim_interesting_pages(issue_text: String): String = {
-    get_table_of_contents_raw(issue_text) match {
+  def parsePage(issueText: String): String = {
+
+    getTableOfContentsRaw(issueText) match {
       case Right(text) =>
         return text
       case _ =>
     }
 
-    get_contributor_bios_raw(issue_text) match {
+    getContributorBiosRaw(issueText) match {
       case Right(text) =>
         return text
       case _ =>
     }
 
-    return issue_text
+    return issueText
   }
 
   def debug(): Unit = {

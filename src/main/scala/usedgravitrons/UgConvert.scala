@@ -24,7 +24,7 @@ object UgConvert extends Edict {
   def main(cmdlineArgs: Array[String]): Unit = {
     val (sc, args) = ContextAndArgs(cmdlineArgs)
 
-    def extracted_issue_text =
+    def extractedIssueText =
       UgExtract.extractor(args("input")) match {
         case Right(text) =>
           text
@@ -34,12 +34,13 @@ object UgConvert extends Edict {
       }
 
     debug()
-    sc.wrap(sc.pipeline.apply(Create.of(extracted_issue_text)))
+    // sc.wrap(sc.pipeline.apply(Create.of(Array(extractedIssueText))))
+    sc.wrap(sc.pipeline.apply(Create.of(extractedIssueText)))
       .transform("intoPages") {
-        _.flatMap(_.split("Used Gravitrons Quarterly Page [0-9]+"))
+        _.flatMap(spiltPages(_))
       }
       .transform("trimInterestingPages") {
-        _.flatMap(p => UgParse.trim_interesting_pages(p))
+        _.map(p => UgParse.parsePage(p))
       }
       .saveAsTextFile(args("output"))
 
@@ -49,58 +50,41 @@ object UgConvert extends Edict {
 
   case class UgConvertError(info: String)
 
-  def outfile_name_from_path(path: String): String = {
+  def outfileNameFromPath(path: String): String = {
     // get filename from path
-    val pdf_fname = (path.split("/").last)
+    val pdfFname = (path.split("/").last)
     // replace the '.pdf' extension with a '.text' extension
-    val text_fname = pdf_fname.take(1 + pdf_fname.lastIndexOf(".")) + "txt"
+    val textFname = pdfFname.take(1 + pdfFname.lastIndexOf(".")) + "txt"
 
-    return text_fname
+    return textFname
   }
 
-  def write_text(fname: String, text: String): Unit = {
+  def writeText(fname: String, text: String): Unit = {
     val fout = new File(fname)
     val buffer = new BufferedWriter(new FileWriter(fout))
     buffer.write(text)
     buffer.close()
   }
 
-  def debug(): Unit = {
-
-    // val pdf_path_env = sys.env.get("PDF_ISSUE_PATH")
-    val text_path_env = sys.env.get("TEXT_ISSUE_PATH")
-
-    text_path_env match {
-      case Some(path) =>
-        val issue_text = Source.fromFile(path).getLines.mkString
-        issue_text
-          .split("Used Gravitrons Quarterly Page [0-9]+")
-          .map(UgParse.trim_interesting_pages(_))
-          .filter(_.nonEmpty)
-          .foreach(println)
-
-      // println(UgParse.get_table_of_contents_raw(issue_text))
-      case None =>
-        println("text_ISSUE_PATH not present in the environment")
-    }
-
-    // path_env match {
-    //   case Some(path) =>
-    //     val outfile_name = outfile_name_from_path(path)
-
-    //     UgExtract.extractor(path) match {
-    //       case Right(text) =>
-    //         println("writing output to: " + outfile_name)
-    //         write_text(outfile_name, text)
-    //       case Left(UgExtractError(e)) =>
-    //         println(e)
-    //     }
-    //   case None =>
-    //     println("PDF_ISSUE_PATH not present in the environment")
-    // }
+  def spiltPages(issueText: String): Array[String] = {
+    issueText.split("Used Gravitrons Quarterly Page [0-9]+")
   }
 
-  // debug()
+  def debug(): Unit = {
+    // val pdfPathEnv = sys.env.get("PDF_ISSUE_PATH")
+    val textPathEnv = sys.env.get("TEXT_ISSUE_PATH")
+
+    textPathEnv match {
+      case Some(path) =>
+        val issueText = Source.fromFile(path).getLines.mkString
+        issueText
+          .split("Used Gravitrons Quarterly Page [0-9]+")
+          .map(UgParse.parsePage(_))
+          .foreach(println)
+      case None =>
+        println("TEXT_ISSUE_PATH not present in the environment")
+    }
+  }
 }
 
 trait Edict {

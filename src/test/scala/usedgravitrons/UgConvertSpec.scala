@@ -20,14 +20,14 @@ class UgConvertSpec extends AnyFlatSpec with Matchers {
     UgConvert.edict should (include("let's") and include("again"))
   }
 
-  "The UgConvert object's outfile_name_from_path function" should "succeed in replacing a .pdf extension with a .txt extension when a path is present" in {
+  "The UgConvert object's outfileNameFromPath function" should "succeed in replacing a .pdf extension with a .txt extension when a path is present" in {
     val path =
       getClass.getClassLoader.getResource("should-be-trivial.pdf").getPath
-    UgConvert.outfile_name_from_path(path) shouldEqual "should-be-trivial.txt"
+    UgConvert.outfileNameFromPath(path) shouldEqual "should-be-trivial.txt"
   }
 
-  "The UgConvert object's outfile_name_from_path function" should "succeed in replacing a .pdf extension with a .txt extension when a path not is present" in {
-    UgConvert.outfile_name_from_path(
+  "The UgConvert object's outfileNameFromPath function" should "succeed in replacing a .pdf extension with a .txt extension when a path not is present" in {
+    UgConvert.outfileNameFromPath(
       "should-be-trivial.pdf"
     ) shouldEqual "should-be-trivial.txt"
   }

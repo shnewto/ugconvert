@@ -60,12 +60,12 @@ class UgExtractSpec extends AnyFlatSpec with Matchers {
   }
 
   "The UgExtract object's extractor function" should "extract text from issue 1 the same way it did last time" in {
-    val pdf_path =
+    val pdfPath =
       getClass.getClassLoader.getResource("issue-01/issue-01.pdf").getPath
-    val text_path =
+    val textPath =
       getClass.getClassLoader.getResource("issue-01/issue-01.txt").getPath
 
-    val issue_text = Source.fromFile(text_path).getLines.mkString
-    UgExtract.extractor(pdf_path).isRight.equals(issue_text)
+    val issueText = Source.fromFile(textPath).getLines.mkString
+    UgExtract.extractor(pdfPath).isRight.equals(issueText)
   }
 }
