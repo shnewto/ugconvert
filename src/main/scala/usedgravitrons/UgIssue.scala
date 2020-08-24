@@ -1,5 +1,8 @@
 package usedgravitrons
 
+/**
+  * Builing blocks of a processed Used Gravitrons Issue
+  */
 object UgIssue {
 
   trait UgPage {

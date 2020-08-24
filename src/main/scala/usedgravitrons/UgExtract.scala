@@ -5,8 +5,17 @@ import java.io.File
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.text.PDFTextStripper
 
+/**
+  * Extract text from a PDF using the pdfbox library
+  */
 object UgExtract {
 
+  /**
+    * Takes the path to a PDF and returns a UgExtractResult with either the extracted text or an error.
+    *
+    * @param fpath must 'look like' a pdf, i.e. it has a '.pdf' extension
+    * @return
+    */
   def extractor(fpath: String): UgExtractResult = {
     if (fpath.split("\\.").last != "pdf") {
       return UgExtractError(
