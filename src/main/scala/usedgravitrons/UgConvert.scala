@@ -60,7 +60,7 @@ object UgConvert extends Edict {
         p
       }
 
-    complete.saveAsTextFile(args("output"))
+    complete.saveAsTextFile(args("complete"))
     sideOutputs(toc).saveAsTextFile(args("toc"))
     sideOutputs(bios).saveAsTextFile(args("bios"))
     sideOutputs(other).saveAsTextFile(args("other"))
