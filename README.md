@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/shnewto/ugconvert.svg?branch=main)](https://travis-ci.org/shnewto/ugconvert)
+
 # UgConvert
 
 _Scala_ + _Scio_ + _Beam_ + _GCP Dataflow_ pipeline for extracting historical data from the PDF archives of the [Used Gravitrons lit zine](https://usedgravitrons.com/).
