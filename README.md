@@ -41,7 +41,8 @@ sbt "runMain usedgravitrons.UgConvert \
 --project=[PROJECT] \
 --runner=DataflowRunner \
 --region=[REGION] \
---tempLocation=[TEMP_FILES_BUCKET] \
+--tempLocation=[TEMP_BUCKET] \
+--stagingLocation=[STAGING_BUCKET] \
 --input=[PDF_ISSUE_INPUT_BUCKET] \
 --bios=[BIOS_OUTPUT_BUCKET] \
 --toc=[TOC_OUTPUT_BUCKET] \
