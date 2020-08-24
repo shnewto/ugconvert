@@ -1,27 +1,12 @@
 package usedgravitrons
 
-import java.io.{
-  BufferedWriter,
-  ByteArrayInputStream,
-  File,
-  FileWriter,
-  IOException
-}
-import java.nio.CharBuffer
+import java.io.{BufferedWriter, File, FileWriter}
 
-import org.apache.pdfbox.pdmodel.PDDocument
-import org.apache.pdfbox.pdmodel.encryption.AccessPermission
-import org.apache.pdfbox.text.PDFTextStripper;
+import com.spotify.scio._
+import com.spotify.scio.values.SideOutput
+import org.apache.beam.sdk.transforms.Create
 
 import scala.io.Source
-import usedgravitrons.UgParse
-import usedgravitrons.UgExtract
-import usedgravitrons.UgIssue
-import com.spotify.scio._
-import com.spotify.scio.values.SCollection
-import com.spotify.scio.values.SideOutput
-import org.apache.beam.sdk.transforms.Create;
-import org.apache.beam.sdk.util.MimeTypes
 
 object UgConvert extends Edict {
 
@@ -51,7 +36,7 @@ object UgConvert extends Edict {
       .withSideOutputs(toc, bios, other)
       .map { (p, ctx) =>
         UgParse.parsePage(p) match {
-          case UgIssue.Toc(t)  => ctx.output(toc, t)
+          case UgIssue.Toc(t) => ctx.output(toc, t)
           case UgIssue.Bios(t) => ctx.output(bios, t)
           case UgIssue.Other(t) =>
             ctx.output(other, t)
@@ -65,6 +50,10 @@ object UgConvert extends Edict {
     sideOutputs(other).saveAsTextFile(args("other"))
 
     sc.run()
+  }
+
+  def spiltPages(issueText: String): Array[String] = {
+    issueText.split("Used Gravitrons Quarterly Page [0-9]+")
   }
 
   def outfileNameFromPath(path: String): String = {
@@ -81,10 +70,6 @@ object UgConvert extends Edict {
     val buffer = new BufferedWriter(new FileWriter(fout))
     buffer.write(text)
     buffer.close()
-  }
-
-  def spiltPages(issueText: String): Array[String] = {
-    issueText.split("Used Gravitrons Quarterly Page [0-9]+")
   }
 
   def debug(): Unit = {

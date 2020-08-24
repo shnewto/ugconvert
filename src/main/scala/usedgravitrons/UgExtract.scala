@@ -1,30 +1,11 @@
 package usedgravitrons
 
-import java.io.{
-  BufferedWriter,
-  ByteArrayInputStream,
-  File,
-  FileWriter,
-  IOException
-}
-import java.nio.CharBuffer
+import java.io.File
 
 import org.apache.pdfbox.pdmodel.PDDocument
-import org.apache.pdfbox.pdmodel.encryption.AccessPermission
-import org.apache.pdfbox.text.PDFTextStripper;
-
-import scala.io.Source
-import usedgravitrons.UgParse
-import com.spotify.scio._
-import com.spotify.scio.values.{SCollection}
+import org.apache.pdfbox.text.PDFTextStripper
 
 object UgExtract {
-  trait UgExtractResult {
-    val text: String
-  }
-
-  case class UgExtractSucceed(val text: String) extends UgExtractResult
-  case class UgExtractError(val text: String) extends UgExtractResult
 
   def extractor(fpath: String): UgExtractResult = {
     if (fpath.split("\\.").last != "pdf") {
@@ -43,5 +24,13 @@ object UgExtract {
         UgExtractError(t.toString)
     }
   }
+
+  trait UgExtractResult {
+    val text: String
+  }
+
+  case class UgExtractSucceed(val text: String) extends UgExtractResult
+
+  case class UgExtractError(val text: String) extends UgExtractResult
 
 }

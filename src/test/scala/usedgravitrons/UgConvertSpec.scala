@@ -2,9 +2,6 @@ package usedgravitrons
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
-import java.io.BufferedReader
-import java.io.FileReader
-import scala.io.Source
 
 class UgConvertSpec extends AnyFlatSpec with Matchers {
   "The UgConvert object's edict" should "say be self-referential" in {

@@ -2,11 +2,8 @@ package usedgravitrons
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
-import usedgravitrons.UgParse.UgParseError
-import java.io.BufferedReader
-import java.io.FileReader
+
 import scala.io.Source
-import usedgravitrons.UgIssue
 
 class UgParseSpec extends AnyFlatSpec with Matchers {
   "The UgParse object's getTableOfContentsRaw" should "should produce just the table of contents text when given an entire issue" in {

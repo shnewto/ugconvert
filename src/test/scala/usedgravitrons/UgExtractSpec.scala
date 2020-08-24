@@ -2,9 +2,7 @@ package usedgravitrons
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
-import usedgravitrons.UgExtract.UgExtractError
-import java.io.BufferedReader
-import java.io.FileReader
+
 import scala.io.Source
 
 class UgExtractSpec extends AnyFlatSpec with Matchers {
