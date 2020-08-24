@@ -22,7 +22,7 @@ class UgParseSpec extends AnyFlatSpec with Matchers {
       .getLines
       .mkString
       .split("Used Gravitrons Quarterly Page [0-9]+")
-      .map(UgParse.parsePage(_))
+      .map(UgParse.parsePageUnsafe(_))
 
     // val issueText = Source.fromFile(issuePath).getLines.mkString
     val tocText = Source.fromFile(tocPath).getLines.mkString
@@ -44,7 +44,7 @@ class UgParseSpec extends AnyFlatSpec with Matchers {
       .getLines
       .mkString
       .split("Used Gravitrons Quarterly Page [0-9]+")
-      .map(UgParse.parsePage(_))
+      .map(UgParse.parsePageUnsafe(_))
 
     val biosText = Source.fromFile(biosPath).getLines.mkString
 
@@ -54,7 +54,7 @@ class UgParseSpec extends AnyFlatSpec with Matchers {
       )
   }
 
-  "The UgParse object's parsePage" should "should produce a Toc object when given a Toc page candidate" in {
+  "The UgParse object's parsePageUnsafe" should "should produce a Toc object when given a Toc page candidate" in {
     val issuePath =
       getClass.getClassLoader.getResource("issue-01/issue-01.txt").getPath
     val tocPath =
@@ -70,12 +70,12 @@ class UgParseSpec extends AnyFlatSpec with Matchers {
 
     val tocText = Source.fromFile(tocPath).getLines.mkString
 
-    UgParse.parsePage(issuePages(0)) shouldEqual UgIssue.Toc(
+    UgParse.parsePageUnsafe(issuePages(0)) shouldEqual UgIssue.Toc(
       tocText
     )
   }
 
-  "The UgParse object's parsePage" should "should produce a Bios object when given a Bios page candidate" in {
+  "The UgParse object's parsePageUnsafe" should "should produce a Bios object when given a Bios page candidate" in {
     val issuePath =
       getClass.getClassLoader.getResource("issue-01/issue-01.txt").getPath
     val biosPath =
@@ -91,7 +91,7 @@ class UgParseSpec extends AnyFlatSpec with Matchers {
 
     val biosText = Source.fromFile(biosPath).getLines.mkString
 
-    UgParse.parsePage(issuePages.last) shouldEqual UgIssue.Bios(
+    UgParse.parsePageUnsafe(issuePages.last) shouldEqual UgIssue.Bios(
       biosText
     )
   }

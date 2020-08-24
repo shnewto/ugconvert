@@ -2,7 +2,6 @@ package usedgravitrons
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
-import usedgravitrons.UgConvert.UgConvertError
 import java.io.BufferedReader
 import java.io.FileReader
 import scala.io.Source

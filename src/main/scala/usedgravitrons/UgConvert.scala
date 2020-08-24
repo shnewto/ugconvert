@@ -67,8 +67,6 @@ object UgConvert extends Edict {
     sc.run()
   }
 
-  case class UgConvertError(info: String)
-
   def outfileNameFromPath(path: String): String = {
     // get filename from path
     val pdfFname = (path.split("/").last)
@@ -90,17 +88,11 @@ object UgConvert extends Edict {
   }
 
   def debug(): Unit = {
-    // val pdfPathEnv = sys.env.get("PDF_ISSUE_PATH")
     val textPathEnv = sys.env.get("TEXT_ISSUE_PATH")
-
     textPathEnv match {
       case Some(path) =>
         val issueText = Source.fromFile(path).getLines.mkString
         println(UgParse.parsePage(issueText))
-      // issueText
-      //   .split("Used Gravitrons Quarterly Page [0-9]+")
-      //   .map(UgParse.parsePage(_))
-      //   .foreach(println)
       case None =>
         println("TEXT_ISSUE_PATH not present in the environment")
     }

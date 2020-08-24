@@ -28,7 +28,7 @@ class IssueParser extends RegexParsers {
   val until_bios =
     """.*?(?=Contributors)""".r
   def contributorBios: Parser[String] =
-    until_bios ~> """Contributors.+""".r ^^ {
+    until_bios ~> """.+""".r ^^ {
       _.toString
     }
 }
@@ -61,7 +61,7 @@ object UgParse extends IssueParser {
     }
   }
 
-  def parsePage(issueText: String): UgIssue.UgPage = {
+  def parsePageUnsafe(issueText: String): UgIssue.UgPage = {
     getTableOfContentsRaw(issueText) match {
       case UgParseSucceed(text) =>
         return UgIssue.Toc(text)
@@ -74,6 +74,18 @@ object UgParse extends IssueParser {
       case _ =>
     }
 
+    return UgIssue.Other(issueText)
+  }
+
+  def parsePage(issueText: String): UgIssue.UgPage = {
+    // Some short cuts here because the parsing functionality above behaves
+    // with Beam in a way that makes me believe it's not threadsafe
+    if (issueText.contains("Editorial...")) {
+      return UgIssue.Toc(issueText)
+    }
+    if (issueText.trim().startsWith("Contributors")) {
+      return UgIssue.Bios(issueText)
+    }
     return UgIssue.Other(issueText)
   }
 
