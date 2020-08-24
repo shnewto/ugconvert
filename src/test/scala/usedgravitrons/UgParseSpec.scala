@@ -27,7 +27,8 @@ class UgParseSpec extends AnyFlatSpec with Matchers {
     // val issueText = Source.fromFile(issuePath).getLines.mkString
     val tocText = Source.fromFile(tocPath).getLines.mkString
 
-    UgParse.getTableOfContentsRaw(issuePages(0).text) shouldEqual Right(tocText)
+    UgParse.getTableOfContentsRaw(issuePages(0).text) shouldEqual UgParse
+      .UgParseSucceed(tocText)
   }
 
   "The UgParse object's getContributorBiosRaw" should "should produce just the table of contents text when given an entire issue" in {
@@ -47,9 +48,10 @@ class UgParseSpec extends AnyFlatSpec with Matchers {
 
     val biosText = Source.fromFile(biosPath).getLines.mkString
 
-    UgParse.getContributorBiosRaw(issuePages.last.text) shouldEqual Right(
-      biosText
-    )
+    UgParse.getContributorBiosRaw(issuePages.last.text) shouldEqual UgParse
+      .UgParseSucceed(
+        biosText
+      )
   }
 
   "The UgParse object's parsePage" should "should produce a Toc object when given a Toc page candidate" in {

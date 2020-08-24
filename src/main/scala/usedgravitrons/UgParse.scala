@@ -34,37 +34,42 @@ class IssueParser extends RegexParsers {
 }
 
 object UgParse extends IssueParser {
-  case class UgParseError(info: String)
+  trait UgParseResult {
+    val text: String
+  }
+
+  case class UgParseSucceed(val text: String) extends UgParseResult
+  case class UgParseError(val text: String) extends UgParseResult
+
   def getTableOfContentsRaw(
       issueText: String
-  ): Either[UgParseError, String] = {
+  ): UgParseResult = {
     parse(tableOfContents, issueText) match {
-      case Success(matched, _) => return Right(matched)
-      case Failure(msg, _)     => return Left(UgParseError(msg))
-      case Error(msg, _)       => return Left(UgParseError(msg))
+      case Success(matched, _) => return UgParseSucceed(matched)
+      case Failure(msg, _)     => return UgParseError(msg)
+      case Error(msg, _)       => return UgParseError(msg)
     }
   }
 
   def getContributorBiosRaw(
       issueText: String
-  ): Either[UgParseError, String] = {
+  ): UgParseResult = {
     parse(contributorBios, issueText) match {
-      case Success(matched, _) => return Right(matched)
-      case Failure(msg, _)     => return Left(UgParseError(msg))
-      case Error(msg, _)       => return Left(UgParseError(msg))
+      case Success(matched, _) => return UgParseSucceed(matched)
+      case Failure(msg, _)     => return UgParseError(msg)
+      case Error(msg, _)       => return UgParseError(msg)
     }
   }
 
   def parsePage(issueText: String): UgIssue.UgPage = {
-
     getTableOfContentsRaw(issueText) match {
-      case Right(text) =>
+      case UgParseSucceed(text) =>
         return UgIssue.Toc(text)
       case _ =>
     }
 
     getContributorBiosRaw(issueText) match {
-      case Right(text) =>
+      case UgParseSucceed(text) =>
         return UgIssue.Bios(text)
       case _ =>
     }

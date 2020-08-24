@@ -30,10 +30,9 @@ object UgConvert extends Edict {
 
     def extractedIssueText =
       UgExtract.extractor(args("input")) match {
-        case Right(text) =>
+        case UgExtract.UgExtractSucceed(text) =>
           text
-        case Left(UgExtract.UgExtractError(e)) =>
-          println(e)
+        case UgExtract.UgExtractError(e) =>
           ""
       }
 
@@ -45,19 +44,22 @@ object UgConvert extends Edict {
       .wrap(sc.pipeline.apply(Create.of(extractedIssueText)))
       .transform("intoPages") {
         _.flatMap(spiltPages(_))
+
       }
 
-    val (rest, sideOutputs) = ugpages
+    val (complete, sideOutputs) = ugpages
       .withSideOutputs(toc, bios, other)
-      .flatMap { (p, ctx) =>
+      .map { (p, ctx) =>
         UgParse.parsePage(p) match {
-          case UgIssue.Toc(t)   => ctx.output(toc, t)
-          case UgIssue.Bios(t)  => ctx.output(bios, t)
-          case UgIssue.Other(t) => ctx.output(other, t)
+          case UgIssue.Toc(t)  => ctx.output(toc, t)
+          case UgIssue.Bios(t) => ctx.output(bios, t)
+          case UgIssue.Other(t) =>
+            ctx.output(other, t)
         }
-        ""
+        p
       }
 
+    complete.saveAsTextFile(args("output"))
     sideOutputs(toc).saveAsTextFile(args("toc"))
     sideOutputs(bios).saveAsTextFile(args("bios"))
     sideOutputs(other).saveAsTextFile(args("other"))
@@ -94,10 +96,11 @@ object UgConvert extends Edict {
     textPathEnv match {
       case Some(path) =>
         val issueText = Source.fromFile(path).getLines.mkString
-        issueText
-          .split("Used Gravitrons Quarterly Page [0-9]+")
-          .map(UgParse.parsePage(_))
-          .foreach(println)
+        println(UgParse.parsePage(issueText))
+      // issueText
+      //   .split("Used Gravitrons Quarterly Page [0-9]+")
+      //   .map(UgParse.parsePage(_))
+      //   .foreach(println)
       case None =>
         println("TEXT_ISSUE_PATH not present in the environment")
     }

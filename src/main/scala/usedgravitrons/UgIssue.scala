@@ -1,6 +1,5 @@
 package usedgravitrons
 
-// lets start with a couple parts and fill it in incrementally
 object UgIssue {
   trait UgPage {
     val text: String

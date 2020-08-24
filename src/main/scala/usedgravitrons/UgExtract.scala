@@ -19,15 +19,17 @@ import com.spotify.scio._
 import com.spotify.scio.values.{SCollection}
 
 object UgExtract {
+  trait UgExtractResult {
+    val text: String
+  }
 
-  case class UgExtractError(info: String)
+  case class UgExtractSucceed(val text: String) extends UgExtractResult
+  case class UgExtractError(val text: String) extends UgExtractResult
 
-  def extractor(fpath: String): Either[UgExtractError, String] = {
+  def extractor(fpath: String): UgExtractResult = {
     if (fpath.split("\\.").last != "pdf") {
-      return Left(
-        UgExtractError(
-          "error: path provided doesn't look like it points to a pdf..."
-        )
+      return UgExtractError(
+        "error: path provided doesn't look like it points to a pdf..."
       )
     }
     try {
@@ -35,10 +37,10 @@ object UgExtract {
       val pdfStripper = new PDFTextStripper();
       val text = pdfStripper.getText(doc);
       doc.close()
-      return Right(text)
+      return UgExtractSucceed(text)
     } catch {
       case t: Throwable =>
-        Left(UgExtractError(t.toString))
+        UgExtractError(t.toString)
     }
   }
 
