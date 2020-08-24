@@ -6,5 +6,6 @@ target
 .scalafmt.conf
 
 .bloop/
-project/
+project/target
+project/project
 
