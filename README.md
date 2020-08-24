@@ -1,6 +1,6 @@
 # UgConvert
 
-_Scala_ + _Scio_ + _GCP Dataflow_ pipeline for extracting historical data from the PDF archives of the [Used Gravitrons lit zine](https://usedgravitrons.com/).
+_Scala_ + _Scio_ + _Beam_ + _GCP Dataflow_ pipeline for extracting historical data from the PDF archives of the [Used Gravitrons lit zine](https://usedgravitrons.com/).
 
 
 ### Requirements 
