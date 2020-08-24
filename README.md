@@ -4,9 +4,11 @@ _Scala_ + _Scio_ + _GCP Dataflow_ pipeline for extracting historical data from t
 
 
 ### Requirements 
+
 - Google Cloud SDK
 - sbt
 - Java 8 SDK
+
 When provided an issue of Used Gravitrons, UgConvert will attempt to
 
 - Read PDF Input
@@ -24,17 +26,28 @@ Some caveats:
 Usage locally:
 
 ```bash
-sbt "runMain usedgravitrons.UgConvert --input=<PDF_ISSUE_PATH> --bios=<BIOS_OUTPUT_DIR> --toc=<TOC_OUTPUT_DIR> --other=<OTHER_OUTPUT_DIR> --complete=<COMPLETE_ISSUE_OUTPUT_DIR>"
+sbt "runMain usedgravitrons.UgConvert \
+--input=<PDF_ISSUE_PATH> \
+--bios=<BIOS_OUTPUT_DIR> \
+--toc=<TOC_OUTPUT_DIR> \
+--other=<OTHER_OUTPUT_DIR> \
+--complete=<COMPLETE_ISSUE_OUTPUT_DIR>"
 ```
 
 Usage on GCP:
 
 ```bash
-sbt "runMain usedgravitrons.UgConvert --project=[PROJECT] --runner=DataflowRunner --region=[ZONE] --input=<PDF_ISSUE_INPUT_BUCKET> --bios=<BIOS_OUTPUT_BUCKET> --toc=<TOC_OUTPUT_BUCKET> --other=<OTHER_OUTPUT_BUCKET> --complete=<COMPLETE_ISSUE_OUTPUT_BUCKET>"
+sbt "runMain usedgravitrons.UgConvert \
+--project=[PROJECT] \
+--runner=DataflowRunner \
+--region=[REGION] \
+--tempLocation=[TEMP_FILES_BUCKET] \
+--input=[PDF_ISSUE_INPUT_BUCKET] \
+--bios=[BIOS_OUTPUT_BUCKET] \
+--toc=[TOC_OUTPUT_BUCKET] \
+--other=[OTHER_OUTPUT_BUCKET] \
+--complete=[COMPLETE_ISSUE_OUTPUT_BUCKET]"
 ```
 
 If you have questions, comments, or want to help out please raise an issue :heart:
 
----
-
-This project is based on the [scio.g8](https://github.com/spotify/scio.g8).
