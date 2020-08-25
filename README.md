@@ -17,7 +17,7 @@ When provided an issue of Used Gravitrons, UgConvert will attempt to
 - Extract the PDF text
 - Split the extracted text into segments for parsing
 - Parse the extracted text segments and identify the 'Table of Contents' and the 'Contributor Bios' pages
-- Distribute the 'Table of Contents', 'Contributor Bios', and 'Other' their own specified output location
+- Distribute the 'Table of Contents', 'Contributor Bios', and 'Other' to their own specified output location
 - Send the extracted text of the full issue (after segmenting) to its own specified output location
 
 Some caveats:
@@ -45,7 +45,7 @@ sbt "runMain usedgravitrons.UgConvert \
 --region=[REGION] \
 --tempLocation=[TEMP_BUCKET] \
 --stagingLocation=[STAGING_BUCKET] \
---input=[PDF_ISSUE_INPUT_BUCKET] \
+--input=[INPUT_BUCKET_WITH_PDF_ISSUE_PATH] \
 --bios=[BIOS_OUTPUT_BUCKET] \
 --toc=[TOC_OUTPUT_BUCKET] \
 --other=[OTHER_OUTPUT_BUCKET] \
