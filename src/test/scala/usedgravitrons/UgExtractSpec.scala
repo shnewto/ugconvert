@@ -54,7 +54,7 @@ class UgExtractSpec extends AnyFlatSpec with Matchers {
     val textPath =
       getClass.getClassLoader.getResource("issue-01/issue-01.txt").getPath
 
-    val issueText = Source.fromFile(textPath).getLines.mkString
+    val issueText = Source.fromFile(textPath).getLines().mkString
 
     UgExtract.extractor(pdfPath) shouldBe a[UgExtract.UgExtractSucceed]
   }

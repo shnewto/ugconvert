@@ -6,7 +6,8 @@ import org.scalatest.matchers.should.Matchers
 import scala.io.Source
 
 class UgParseSpec extends AnyFlatSpec with Matchers {
-  "The UgParse object's getTableOfContentsRaw" should "should produce just the table of contents text when given an entire issue" in {
+
+  "The UgParse object's parsePage" should "should produce a Toc object when given a Toc page candidate" in {
     val issuePath =
       getClass.getClassLoader.getResource("issue-01/issue-01.txt").getPath
     val tocPath =
@@ -16,63 +17,18 @@ class UgParseSpec extends AnyFlatSpec with Matchers {
 
     val issuePages = Source
       .fromFile(issuePath)
-      .getLines
-      .mkString
-      .split("Used Gravitrons Quarterly Page [0-9]+")
-      .map(UgParse.parsePageUnsafe(_))
-
-    // val issueText = Source.fromFile(issuePath).getLines.mkString
-    val tocText = Source.fromFile(tocPath).getLines.mkString
-
-    UgParse.getTableOfContentsRaw(issuePages(0).text) shouldEqual UgParse
-      .UgParseSucceed(tocText)
-  }
-
-  "The UgParse object's getContributorBiosRaw" should "should produce just the table of contents text when given an entire issue" in {
-    val issuePath =
-      getClass.getClassLoader.getResource("issue-01/issue-01.txt").getPath
-    val biosPath =
-      getClass.getClassLoader
-        .getResource("issue-01/contributor-bios.txt")
-        .getPath
-
-    val issuePages = Source
-      .fromFile(issuePath)
-      .getLines
-      .mkString
-      .split("Used Gravitrons Quarterly Page [0-9]+")
-      .map(UgParse.parsePageUnsafe(_))
-
-    val biosText = Source.fromFile(biosPath).getLines.mkString
-
-    UgParse.getContributorBiosRaw(issuePages.last.text) shouldEqual UgParse
-      .UgParseSucceed(
-        biosText
-      )
-  }
-
-  "The UgParse object's parsePageUnsafe" should "should produce a Toc object when given a Toc page candidate" in {
-    val issuePath =
-      getClass.getClassLoader.getResource("issue-01/issue-01.txt").getPath
-    val tocPath =
-      getClass.getClassLoader
-        .getResource("issue-01/table-of-contents.txt")
-        .getPath
-
-    val issuePages = Source
-      .fromFile(issuePath)
-      .getLines
+      .getLines()
       .mkString
       .split("Used Gravitrons Quarterly Page [0-9]+")
 
-    val tocText = Source.fromFile(tocPath).getLines.mkString
+    val tocText = Source.fromFile(tocPath).getLines().mkString
 
-    UgParse.parsePageUnsafe(issuePages(0)) shouldEqual UgIssue.Toc(
+    UgParse.parsePage(issuePages(0)) shouldEqual UgIssue.Toc(
       tocText
     )
   }
 
-  "The UgParse object's parsePageUnsafe" should "should produce a Bios object when given a Bios page candidate" in {
+  "The UgParse object's parsePage" should "should produce a Bios object when given a Bios page candidate" in {
     val issuePath =
       getClass.getClassLoader.getResource("issue-01/issue-01.txt").getPath
     val biosPath =
@@ -82,13 +38,13 @@ class UgParseSpec extends AnyFlatSpec with Matchers {
 
     val issuePages = Source
       .fromFile(issuePath)
-      .getLines
+      .getLines()
       .mkString
       .split("Used Gravitrons Quarterly Page [0-9]+")
 
-    val biosText = Source.fromFile(biosPath).getLines.mkString
+    val biosText = Source.fromFile(biosPath).getLines().mkString
 
-    UgParse.parsePageUnsafe(issuePages.last) shouldEqual UgIssue.Bios(
+    UgParse.parsePage(issuePages.last) shouldEqual UgIssue.Bios(
       biosText
     )
   }
