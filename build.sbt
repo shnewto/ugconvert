@@ -2,6 +2,7 @@ import sbt._
 import Keys._
 val scioVersion = "0.9.3"
 val beamVersion = "2.23.0"
+
 lazy val commonSettings = Def.settings(
   organization := "usedgravitrons",
   // Semantic versioning http://semver.org/
@@ -27,7 +28,8 @@ lazy val root: Project = project
       "com.spotify" %% "scio-test" % scioVersion % Test,
       "org.apache.beam" % "beam-runners-direct-java" % beamVersion,
       "org.apache.beam" % "beam-runners-google-cloud-dataflow-java" % beamVersion,
-      "org.slf4j" % "slf4j-simple" % "1.7.30"
+      "org.slf4j" % "slf4j-simple" % "1.7.30",
+      "org.apache.pdfbox" % "pdfbox" % "2.0.21"
     )
   )
   .enablePlugins(JavaAppPackaging)
@@ -38,13 +40,11 @@ lazy val repl: Project = project
   .settings(
     name := "repl",
     description := "Scio REPL for ugconvert",
+    publish / skip := true,
+    run / classLoaderLayeringStrategy := ClassLoaderLayeringStrategy.Flat,
     libraryDependencies ++= Seq(
       "com.spotify" %% "scio-repl" % scioVersion
     ),
-    Compile / mainClass := Some("com.spotify.scio.repl.ScioShell"),
-    publish / skip := true
+    Compile / mainClass := Some("com.spotify.scio.repl.ScioShell")
   )
   .dependsOn(root)
-
-libraryDependencies += "org.apache.pdfbox" % "pdfbox" % "2.0.21"
-libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.2"
